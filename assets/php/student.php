@@ -58,6 +58,7 @@ if ($method === "GET") {
         exit;
     }
 
+
     // GET ALL ACADEMIC LEVELS
     if (isset($_GET["get-all-acadlevel"])) {
 
@@ -70,6 +71,7 @@ if ($method === "GET") {
         ";
 
         $stmt = $pdo->query($sql);
+
         $acadlevels = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         echo json_encode([
@@ -92,6 +94,7 @@ if ($method === "GET") {
         ";
 
         $stmt = $pdo->query($sql);
+
         $sections = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         echo json_encode([
@@ -132,6 +135,7 @@ if ($method === "GET") {
                 students.lastname LIKE :search
                 OR students.firstname LIKE :search
                 OR students.middlename LIKE :search
+                OR students.gender LIKE :search
                 OR students.email LIKE :search
 
             ORDER BY students.id DESC
@@ -152,6 +156,7 @@ if ($method === "GET") {
 
         exit;
     }
+
 
     // GET STUDENT BY ID
     if (isset($_GET["id"])) {
@@ -242,6 +247,9 @@ if ($method === "POST") {
         exit;
     }
 
+    $gender = $data["gender"] ?? "";
+    $gender = ["Male" => "M", "Female" => "F", "Transformer" => "T"][$gender] ?? $gender;
+
 
     $sql = "
         INSERT INTO students
@@ -273,8 +281,8 @@ if ($method === "POST") {
         "lastname" => $data["lastname"],
         "firstname" => $data["firstname"],
         "middlename" => $data["middlename"],
-        "gender" => $data["gender"],
-        "acadlevel_id" => $data["acadlevel_id"],
+        "gender" => $gender,
+        "acadlevel_id" => $data["acadlevel_id"] ?? $data["academic_level_id"] ?? null,
         "section_id" => $data["section_id"],
         "email" => $data["email"]
     ]);
@@ -289,6 +297,7 @@ if ($method === "POST") {
 
     exit;
 }
+
 
 // PUT - UPDATE STUDENT
 if ($method === "PUT") {
@@ -309,6 +318,9 @@ if ($method === "PUT") {
 
         exit;
     }
+
+    $gender = $data["gender"] ?? "";
+    $gender = ["Male" => "M", "Female" => "F", "Transformer" => "T"][$gender] ?? $gender;
 
 
     $sql = "
@@ -332,8 +344,8 @@ if ($method === "PUT") {
         "lastname" => $data["lastname"],
         "firstname" => $data["firstname"],
         "middlename" => $data["middlename"],
-        "gender" => $data["gender"],
-        "acadlevel_id" => $data["acadlevel_id"],
+        "gender" => $gender,
+        "acadlevel_id" => $data["acadlevel_id"] ?? $data["academic_level_id"] ?? null,
         "section_id" => $data["section_id"],
         "email" => $data["email"],
         "id" => $data["id"]
@@ -346,6 +358,7 @@ if ($method === "PUT") {
 
     exit;
 }
+
 
 if ($method === "DELETE") {
 
